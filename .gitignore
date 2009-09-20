@@ -1,0 +1,5 @@
+*.a
+*.o
+main.elf
+main.bin
+main.map
