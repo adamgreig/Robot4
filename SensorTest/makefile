@@ -27,6 +27,9 @@ FWLIB = lib/STM32F10x_StdPeriph_Driver/libstm32fw.a
 # [OPTIONAL] Uncomment to use the USB library
 USBLIB = lib/STM32_USB-FS-Device_Driver/libstm32usb.a
 
+# [OPTIONAL] Uncomment to link to maths library libm
+#LIBM = -lm
+
 export DEBUG
 export MESSAGES
 
@@ -61,7 +64,8 @@ AS = $(CC) -x assembler-with-cpp -c $(TARGET_ARCH)
 ASFLAGS = $(COMPILE_OPTS)
 
 LD = $(CC)
-LDFLAGS = -Wl,--gc-sections,-Map=$(MAIN_MAP),-cref -T stm32.ld $(INCLUDE_DIRS) $(LIBRARY_DIRS)
+LDFLAGS = -Wl,--gc-sections,-Map=$(MAIN_MAP),-cref -T stm32.ld $(INCLUDE_DIRS)\
+ $(LIBRARY_DIRS) $(LIBM)
 
 AR = arm-none-eabi-ar
 ARFLAGS = cr
@@ -108,7 +112,8 @@ $(MAIN_BIN): $(MAIN_OUT)
 .PHONY: fwlib
 fwlib: $(FWLIB)
 
-$(FWLIB): $(wildcard lib/STM32F10x_StdPeriph_Driver/*.h) $(wildcard lib/STM32F10x_StdPeriph_Driver/inc/*.h)
+$(FWLIB): $(wildcard lib/STM32F10x_StdPeriph_Driver/*.h)\
+ $(wildcard lib/STM32F10x_StdPeriph_Driver/inc/*.h)
 	@cd lib/STM32F10x_StdPeriph_Driver && $(MAKE)
 
 # usblib
@@ -139,13 +144,15 @@ flash-bin: all
 
 .PHONY: upload
 upload: all
-	@python jtag/stm32loader.py -p $(STM32LDR_PORT) -b $(STM32LDR_BAUD) -e $(STM32LDR_VERIFY) -w main.bin
+	@python jtag/stm32loader.py -p $(STM32LDR_PORT) -b $(STM32LDR_BAUD)\
+    -e $(STM32LDR_VERIFY) -w main.bin
 
 
 # clean
 
 .PHONY: clean
 clean:
-	-rm -f $(MAIN_OBJS) $(MAIN_OUT) $(MAIN_MAP) $(MAIN_BIN) jtag/flash.elf jtag/flash.bin
+	-rm -f $(MAIN_OBJS) $(MAIN_OUT) $(MAIN_MAP) $(MAIN_BIN)
+    -rm -f jtag/flash.elf jtag/flash.bin
 	@cd lib/STM32F10x_StdPeriph_Driver && $(MAKE) clean
 	@cd lib/STM32_USB-FS-Device_Driver && $(MAKE) clean
