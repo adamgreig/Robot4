@@ -153,6 +153,6 @@ upload: all
 .PHONY: clean
 clean:
 	-rm -f $(MAIN_OBJS) $(MAIN_OUT) $(MAIN_MAP) $(MAIN_BIN)
-    -rm -f jtag/flash.elf jtag/flash.bin
+	-rm -f jtag/flash.elf jtag/flash.bin
 	@cd lib/STM32F10x_StdPeriph_Driver && $(MAKE) clean
 	@cd lib/STM32_USB-FS-Device_Driver && $(MAKE) clean
