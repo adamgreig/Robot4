@@ -64,8 +64,8 @@ AS = $(CC) -x assembler-with-cpp -c $(TARGET_ARCH)
 ASFLAGS = $(COMPILE_OPTS)
 
 LD = $(CC)
-LDFLAGS = -Wl,--gc-sections,-Map=$(MAIN_MAP),-cref -T stm32.ld $(INCLUDE_DIRS)\
- $(LIBRARY_DIRS) $(LIBM)
+LDFLAGS = -Wl,--gc-sections,-Map=$(MAIN_MAP),-cref -T lanchon-stm32.ld -L lib\
+ $(INCLUDE_DIRS) $(LIBRARY_DIRS) $(LIBM)
 
 AR = arm-none-eabi-ar
 ARFLAGS = cr
