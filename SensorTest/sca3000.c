@@ -100,7 +100,10 @@ short int __sca3000_get_accel(char reg) {
     short int msb = (short int)__sca3000_read_reg(reg);
     short int lsb = (short int)__sca3000_read_reg(reg - 1);
     
+    // Combine the MSB and LSB, putting the sign bit in the correct place
     short int accel = (msb << 8) | lsb;
+    // Divide by 8 to right-shift without moving the sign bit, then multiply
+    //  by 3/4 to convert to milligees.
     accel = (3 * accel) / 32;
     
     return accel;
