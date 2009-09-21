@@ -43,59 +43,22 @@ void sca3000_init() {
 }
 
 short int sca3000_get_accel_x() {
-    short int msb = (short int)__sca3000_read_reg(SCA3000_REG_X_MSB);
-    short int lsb = (short int)__sca3000_read_reg(SCA3000_REG_X_LSB);
     
-    short int accel = 0x0000;
-    accel |= lsb >> 3;
-    accel |= (msb & 0x7F) << 5;
+    return __sca3000_get_accel(SCA3000_REG_X);
     
-    if(msb & 0x80)
-        accel = -accel;
-    
-    accel *= 3;
-    accel /= 4;
-    
-    return accel;
 }
 
 short int sca3000_get_accel_y() {
-    short int msb = (short int)__sca3000_read_reg(SCA3000_REG_Y_MSB);
-    short int lsb = (short int)__sca3000_read_reg(SCA3000_REG_Y_LSB);
-    
-    short int accel = 0x0000;
-    accel |= lsb >> 3;
-    accel |= (msb & 0x7F) << 5;
-    
-    if(msb & 0x80)
-        accel = -accel;
-    
-    accel *= 3;
-    accel /= 4;
-    
-    return accel;
+    return __sca3000_get_accel(SCA3000_REG_Y);
 }
 
 short int sca3000_get_accel_z() {
-    short int msb = (short int)__sca3000_read_reg(SCA3000_REG_Z_MSB);
-    short int lsb = (short int)__sca3000_read_reg(SCA3000_REG_Z_LSB);
-    
-    short int accel = 0x0000;
-    accel |= lsb >> 3;
-    accel |= (msb & 0x7F) << 5;
-    
-    if(msb & 0x80)
-        accel = -accel;
-    
-    accel *= 3;
-    accel /= 4;
-    
-    return accel;
+    return __sca3000_get_accel(SCA3000_REG_Z);
 }
 
 short int sca3000_get_temp() {
-    unsigned short int msb = (unsigned short int)__sca3000_read_reg(SCA3000_REG_TEMP_MSB);
-    unsigned short int lsb = (unsigned short int)__sca3000_read_reg(SCA3000_REG_TEMP_LSB);
+    short int msb = (short int)__sca3000_read_reg(SCA3000_REG_TEMP);
+    short int lsb = (short int)__sca3000_read_reg(SCA3000_REG_TEMP - 1);
     
     //Mask unused bits
     msb &= 0x3F;
@@ -130,4 +93,16 @@ char __sca3000_read_reg(char addr) {
     char data = __sca3000_send_byte(0xFF);
     __sca3000_end();
     return data;
+}
+
+short int __sca3000_get_accel(char reg) {
+    
+    short int msb = (short int)__sca3000_read_reg(reg);
+    short int lsb = (short int)__sca3000_read_reg(reg - 1);
+    
+    short int accel = (msb << 8) | lsb;
+    accel = (3 * accel) / 32;
+    
+    return accel;
+    
 }

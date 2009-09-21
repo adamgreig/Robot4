@@ -11,7 +11,7 @@
 #define USART_RCC_USART RCC_APB2Periph_USART1
 #define USART_TX        GPIO_Pin_9
 #define USART_RX        GPIO_Pin_10
-#define USART_BAUD      57600
+#define USART_BAUD      115200
 
 //Public functions
 void usart_init();

@@ -36,8 +36,8 @@ int main(void) {
         short int temp = sca3000_get_temp();
         
         char out[64];
-        sprintf(out, "X: %05d\tY: %05d\tZ: %05d\tTemp: %d\r\n", accel_x, 
-               accel_y, accel_z, temp);
+        sprintf(out, "X: %05d\tY: %05d\tZ: %05d\tTemp: %d\r\n", (int)accel_x, 
+               (int)accel_y, (int)accel_z, (int)temp);
         
         usart_send_str(out);
         
