@@ -25,19 +25,18 @@ int main(void) {
     // Set up the USART for outputting sensor information
     usart_init();
     
+    // Begin the SCA3000's DMA channel
+    sca3000_dma_start();
+    
     for(;;) {
         
-        short int accel_x = sca3000_get_accel_x();
-        Delay(0xFFFF);
-        short int accel_y = sca3000_get_accel_y();
-        Delay(0xFFFF);
-        short int accel_z = sca3000_get_accel_z();
-        Delay(0xFFFF);
-        short int temp = sca3000_get_temp();
+        short int accel_x = sca3000_accel_x();
+        short int accel_y = sca3000_accel_y();
+        short int accel_z = sca3000_accel_z();
         
         char out[64];
-        sprintf(out, "X: %05d\tY: %05d\tZ: %05d\tTemp: %d\r\n", (int)accel_x, 
-               (int)accel_y, (int)accel_z, (int)temp);
+        sprintf(out, "X: %05d\tY: %05d\tZ: %05d\r\n", (int)accel_x, 
+               (int)accel_y, (int)accel_z);
         
         usart_send_str(out);
         
