@@ -116,7 +116,7 @@ __attribute__ ((noinline))
 void __scp1000_wait_ms(volatile unsigned int ms) {
     asm(
         "scp1000_loop:                          \r\n"
-        "   ldr r0, =0x8CA0                     \r\n"
+        "   ldr r0, =12000                      \r\n"
         "   scp1000_innerloop:                  \r\n"
         "       subs r0, #1                     \r\n"
         "       bne scp1000_innerloop           \r\n"
