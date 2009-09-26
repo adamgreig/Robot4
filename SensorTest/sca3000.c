@@ -5,8 +5,8 @@
 //Public functions
 
 //Store the data retrieved in circular buffer DMA mode
-char sca3000_buffer[6];
-char sca3000_dummy_byte = 0x55;
+uint8_t sca3000_buffer[6];
+uint8_t sca3000_dummy_byte = 0x55;
 
 void sca3000_init() {
     
@@ -107,44 +107,44 @@ void sca3000_dma_stop() {
     __sca3000_end();
 }
 
-short int sca3000_get_accel_x() {
+int16_t sca3000_get_accel_x() {
     return __sca3000_get_accel(SCA3000_REG_X);
 }
 
-short int sca3000_get_accel_y() {
+int16_t sca3000_get_accel_y() {
     return __sca3000_get_accel(SCA3000_REG_Y);
 }
 
-short int sca3000_get_accel_z() {
+int16_t sca3000_get_accel_z() {
     return __sca3000_get_accel(SCA3000_REG_Z);
 }
 
-short int sca3000_accel_x() {
+int16_t sca3000_accel_x() {
     return __sca3000_calculate_accel(4);
 }
 
-short int sca3000_accel_y() {
+int16_t sca3000_accel_y() {
     return __sca3000_calculate_accel(2);
 }
 
-short int sca3000_accel_z() {
+int16_t sca3000_accel_z() {
     return __sca3000_calculate_accel(0);
 }
 
-short int sca3000_get_temp() {
+int16_t sca3000_get_temp() {
     //Stop DMA so we can get the temperature
     sca3000_dma_stop();
     
     //Fetch the two bytes of temperature information
-    short int msb = (short int)__sca3000_read_reg(SCA3000_REG_TEMP);
-    short int lsb = (short int)__sca3000_read_reg(SCA3000_REG_TEMP - 1);
+    int16_t msb = (int16_t)__sca3000_read_reg(SCA3000_REG_TEMP);
+    int16_t lsb = (int16_t)__sca3000_read_reg(SCA3000_REG_TEMP - 1);
     
     //Mask unused bits
     msb &= 0x3F;
     lsb &= 0xE0;
     
     //Convert to a temperature
-    short int temp = 23 + ((((msb << 3)|(lsb >> 5)) - 256) * 10) / 18;
+    int16_t temp = 23 + ((((msb << 3)|(lsb >> 5)) - 256) * 10) / 18;
     
     return temp;
 }
@@ -161,30 +161,30 @@ void __sca3000_end() {
     GPIO_SetBits(SCA3000_GPIO, GPIO_Pin_4);
 }
 
-char __sca3000_send_byte(char byte) {
+uint8_t __sca3000_send_byte(uint8_t byte) {
     while (SPI_I2S_GetFlagStatus(SCA3000_SPI, SPI_I2S_FLAG_TXE) == RESET) {}
     SPI_I2S_SendData(SCA3000_SPI, byte);
     while (SPI_I2S_GetFlagStatus(SCA3000_SPI, SPI_I2S_FLAG_RXNE) == RESET) {}
     return SPI_I2S_ReceiveData(SCA3000_SPI);
 }
 
-char __sca3000_read_reg(char addr) {
+uint8_t __sca3000_read_reg(uint8_t addr) {
     __sca3000_start();
     __sca3000_send_byte(addr << 2);
-    char data = __sca3000_send_byte(0xFF);
+    uint8_t data = __sca3000_send_byte(0xFF);
     __sca3000_end();
     return data;
 }
 
-short int __sca3000_get_accel(char reg) {
+int16_t __sca3000_get_accel(uint8_t reg) {
     //Stop DMA to manually get an acceleration
     sca3000_dma_stop();
     
-    short int msb = (short int)__sca3000_read_reg(reg);
-    short int lsb = (short int)__sca3000_read_reg(reg - 1);
+    int16_t msb = (int16_t)__sca3000_read_reg(reg);
+    int16_t lsb = (int16_t)__sca3000_read_reg(reg - 1);
     
     //Combine the MSB and LSB, putting the sign bit in the correct place
-    short int accel = (msb << 8) | lsb;
+    int16_t accel = (msb << 8) | lsb;
     //Divide by 8 to right-shift without moving the sign bit, then multiply
     // by 3/4 to convert to milligees.
     accel = (3 * accel) / 32;
@@ -193,14 +193,14 @@ short int __sca3000_get_accel(char reg) {
     
 }
 
-short int __sca3000_calculate_accel(short int msb_index) {
+int16_t __sca3000_calculate_accel(int16_t msb_index) {
     
     //Get current acceleration from the DMA circular buffer
-    short int msb = (short int)sca3000_buffer[msb_index];
-    short int lsb = (short int)sca3000_buffer[msb_index + 1];
+    int16_t msb = (int16_t)sca3000_buffer[msb_index];
+    int16_t lsb = (int16_t)sca3000_buffer[msb_index + 1];
     
     //Combine MSB and LSB, putting sign bit in the correct place
-    short int accel = (msb << 8) | lsb;
+    int16_t accel = (msb << 8) | lsb;
     
     //Divide by 8 to right-shift without moving the sign bit, then multiply
     // by 3/4 to convert to milligees.

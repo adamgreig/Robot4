@@ -24,18 +24,18 @@
 void sca3000_init();
 void sca3000_dma_start();
 void sca3000_dma_stop();
-short int sca3000_get_accel_x();
-short int sca3000_get_accel_y();
-short int sca3000_get_accel_z();
-short int sca3000_accel_x();
-short int sca3000_accel_y();
-short int sca3000_accel_z();
-short int sca3000_get_temp();
+int16_t sca3000_get_accel_x();
+int16_t sca3000_get_accel_y();
+int16_t sca3000_get_accel_z();
+int16_t sca3000_accel_x();
+int16_t sca3000_accel_y();
+int16_t sca3000_accel_z();
+int16_t sca3000_get_temp();
 
 //Private functions
 void __sca3000_start();
 void __sca3000_end();
-char __sca3000_send_byte(char byte);
-char __sca3000_read_reg(char addr);
-short int __sca3000_get_accel(char reg);
-short int __sca3000_calculate_accel(short int msb_index);
+uint8_t __sca3000_send_byte(uint8_t byte);
+uint8_t __sca3000_read_reg(uint8_t addr);
+int16_t __sca3000_get_accel(uint8_t reg);
+int16_t __sca3000_calculate_accel(int16_t msb_index);
