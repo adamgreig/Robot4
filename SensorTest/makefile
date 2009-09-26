@@ -51,10 +51,8 @@ ifdef DEBUG
  TARGET_OPTS = -O0 -g3
  DEBUG_MACRO = -DDEBUG
 else
- TARGET_OPTS = -O2 $(F_INLINE) $(F_INLINE_ONCE) $(F_UNROLL_LOOPS)
- F_INLINE = -finline
- F_INLINE_ONCE = -finline-functions-called-once
- #F_UNROLL_LOOPS = -funroll-loops
+ TARGET_OPTS = -O2 -finline -finline-functions-called-once\
+ -fpromote-loop-indices -funroll-loops -fno-common
 endif
 
 CC = arm-none-eabi-gcc
