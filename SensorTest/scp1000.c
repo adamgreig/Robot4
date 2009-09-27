@@ -52,7 +52,7 @@ void scp1000_init() {
     GPIO_SetBits(SCP1000_VCC_GPIO, SCP1000_VCC);
     
     //Wait for powerup
-    __scp1000_wait_ms(60);
+    delay_ms(60);
     
     //Attempt status read six times
     uint16_t i;
@@ -60,7 +60,7 @@ void scp1000_init() {
         uint8_t status = __scp1000_read_reg(SCP1000_REG_STATUS);
         if(!(status & 0x01))
             break;
-        __scp1000_wait_ms(10);
+        delay_ms(10);
     }
     
     if(i==5) {
@@ -77,11 +77,11 @@ void scp1000_init() {
     
     //Clear OPERATION register
     __scp1000_write_reg(SCP1000_REG_OPERATION, 0x00);
-    __scp1000_wait_ms(10);
+    delay_ms(10);
     
     //Set OEPRATION to high speed continuous conversion
     __scp1000_write_reg(SCP1000_REG_OPERATION, SCP1000_OP_HIGHRES);
-    __scp1000_wait_ms(100);
+    delay_ms(100);
     
 }
 
@@ -112,22 +112,6 @@ uint16_t scp1000_get_temp() {
 }
 
 //Private functions
-__attribute__ ((noinline))
-void __scp1000_wait_ms(volatile unsigned int ms) {
-    asm(
-        "scp1000_loop:                          \r\n"
-        "   ldr r0, =12000                      \r\n"
-        "   scp1000_innerloop:                  \r\n"
-        "       subs r0, #1                     \r\n"
-        "       bne scp1000_innerloop           \r\n"
-        "   subs %0, #1                         \r\n"
-        "   bne scp1000_loop                    \r\n"
-        :
-        : "r"(ms)
-        : "cc", "r0", "r1"
-        );
-}
-
 void __scp1000_start() {
     GPIO_ResetBits(SCP1000_GPIO, SCP1000_CS);
 }
@@ -163,7 +147,7 @@ uint16_t __scp1000_read_reg_16(uint8_t addr) {
 uint16_t __scp1000_read_reg_indirect(uint8_t addr) {
     __scp1000_write_reg(SCP1000_REG_ADDPTR, addr);
     __scp1000_write_reg(SCP1000_REG_OPERATION, SCP1000_OP_READ);
-    __scp1000_wait_ms(10);
+    delay_ms(10);
     return __scp1000_read_reg_16(SCP1000_REG_DATARD16);
 }
 
@@ -178,5 +162,5 @@ void __scp1000_write_reg_indirect(uint8_t addr, uint8_t byte) {
     __scp1000_write_reg(SCP1000_REG_ADDPTR, addr);
     __scp1000_write_reg(SCP1000_REG_DATAWR, byte);
     __scp1000_write_reg(SCP1000_REG_OPERATION, SCP1000_OP_WRITE);
-    __scp1000_wait_ms(50);
+    delay_ms(50);
 }

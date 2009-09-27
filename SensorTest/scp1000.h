@@ -1,6 +1,7 @@
 // Read in barometric pressure from an SCP1000
 
 #include "stm32f10x.h"
+#include "util.h"
 
 //Defines
 #define SCP1000_GPIO            GPIOB
@@ -33,7 +34,6 @@ uint32_t scp1000_get_pressure();
 uint16_t scp1000_get_temp();
 
 //Private functions
-void __scp1000_wait_ms(volatile unsigned int ms);
 void __scp1000_start();
 void __scp1000_end();
 uint8_t __scp1000_send_byte(uint8_t byte);
